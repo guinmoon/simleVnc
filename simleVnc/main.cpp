@@ -46,14 +46,21 @@ void BitmapToJpg(HBITMAP hbmpImage, int width, int height)
 {
     Bitmap *p_bmp = Bitmap::FromHBITMAP(hbmpImage, NULL);
     //Bitmap *p_bmp = new Bitmap(width, height, PixelFormat32bppARGB);
-    
+    EncoderParameters encoderParameters;
+	encoderParameters.Count = 1;
+	encoderParameters.Parameter[0].Guid = EncoderQuality;
+	encoderParameters.Parameter[0].Type = EncoderParameterValueTypeLong;
+	encoderParameters.Parameter[0].NumberOfValues = 1;
+	ULONG quality = 10;
+	encoderParameters.Parameter[0].Value = &quality;
     CLSID pngClsid;
     int result = GetEncoderClsid(L"image/jpeg", &pngClsid);
     if(result != -1)
         std::cout << "Encoder succeeded" << std::endl;
     else
         std::cout << "Encoder failed" << std::endl;
-    p_bmp->Save(L"screen.jpg", &pngClsid, NULL);
+    p_bmp->Save(L"screen.jpg", &pngClsid, &encoderParameters);
+	
     delete p_bmp;
 }
 
@@ -82,6 +89,6 @@ int main() {
     
     //Shutdown GDI+
     GdiplusShutdown(gdiplusToken);
-    
+	getchar();
     return 0;
 }
